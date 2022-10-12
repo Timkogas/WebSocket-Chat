@@ -18,6 +18,9 @@ function ChatPage() {
             return prevState.concat(decodedMessage.message)
           });
           break;
+        default: 
+          console.log('no types')
+          break;
       }
     })
     return ()=>wsRef.current.close()

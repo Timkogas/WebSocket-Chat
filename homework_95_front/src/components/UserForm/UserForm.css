@@ -1,0 +1,41 @@
+.form_user_wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+.form_user {
+  width: 500px;
+  background-color: rgb(68, 68, 68);
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  padding-top: 30px;
+  padding-bottom: 50px;
+}
+.user_form_hr {
+  font-size: 18px;
+  position: relative;
+  width: 90%;
+  text-align: center;
+}
+.user_form_hr::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 45%;
+  height: 1px;
+  background-color: grey;
+  right: 0
+}
+.user_form_hr::before {
+  content: '';
+  position: absolute;
+  width: 45%;
+  top: 50%;
+  height: 1px;
+  background-color: grey;
+  left: 0
+}

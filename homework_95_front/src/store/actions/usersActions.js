@@ -1,8 +1,5 @@
 import axios from '../../axiosInstance'
 import {
-  FETCH_TRACK_HISTORY_ERROR,
-  FETCH_TRACK_HISTORY_REQUEST,
-  FETCH_TRACK_HISTORY_SUCCESS,
     LOGIN_USER_FAILURE,
     LOGIN_USER_SUCCESS,
     LOGOUT_USER_FAILURE,
@@ -10,8 +7,6 @@ import {
     REGISTER_USER_FAILURE,
     REGISTER_USER_REQUEST,
     REGISTER_USER_SUCCESS,
-    SEND_LISTENED_TRACK_ERROR,
-    SEND_LISTENED_TRACK_SUCCESS,
     SET_NULL_LOGIN_ERROR,
     SET_NULL_REGISTER_ERROR
 } from "../actionTypes/usersActionTypes";
@@ -39,10 +34,11 @@ export const registerUser = (userData, navigate) => {
     return async (dispatch) => {
         dispatch(registerUserRequest());
         try {
-            await axios.post("/users", userData);
+           const res = await axios.post("/users", userData);
             dispatch(registerUserSuccess());
             dispatch(setNullRegisterError())
-            navigate("/log-in");
+            dispatch(loginUserSuccess(res.data))
+            navigate("/");
         } catch (e) {
             if (e?.response?.data) {
                 dispatch(registerUserFailure(e.response.data.message));
@@ -72,56 +68,6 @@ export const loginUser = (userData, navigate) => {
             dispatch(loginUserFailure(e?.response?.data?.message));
         }
     };
-};
-
-export const sendListenedTrackSuccess = () => {
-  return {type: SEND_LISTENED_TRACK_SUCCESS};
-};
-const sendListenedTrackError = (error) => {
-  return {type: SEND_LISTENED_TRACK_ERROR, error};
-};
-
-export const sendListenedTrack = (track) => {
-  return async (dispatch, getState) => {
-    const token = getState().users?.user?.token;
-      try {
-          const response = await axios.post("/track_history", track, {
-            headers: {
-              'Authenticate': token
-            }
-          });
-          dispatch(sendListenedTrackSuccess(response.data));
-      } catch (e) {
-          dispatch(sendListenedTrackError(e?.response?.data?.message));
-      }
-  };
-};
-
-export const fetchTrackHistoryRequest = () => {
-  return {type: FETCH_TRACK_HISTORY_REQUEST};
-};
-export const fetchTrackHistorySuccess = (trackHistory) => {
-  return {type: FETCH_TRACK_HISTORY_SUCCESS, trackHistory};
-};
-const  fetchTrackHistoryError = (error) => {
-  return {type: FETCH_TRACK_HISTORY_ERROR, error};
-};
-
-export const fetchTrackHistory = () => {
-  return async (dispatch, getState) => {
-    const token = getState().users?.user?.token;
-    dispatch(fetchTrackHistoryRequest())
-      try {
-        const response = await axios.get(`/track_history`, {
-          headers: {
-            'Authenticate': token
-          }
-        })
-        dispatch(fetchTrackHistorySuccess(response.data));
-      } catch (e) {
-        dispatch(fetchTrackHistoryError(e?.response?.data?.message));
-      }
-  };
 };
 
 const logoutUserSuccess = () => {

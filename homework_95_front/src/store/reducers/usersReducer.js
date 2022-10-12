@@ -1,7 +1,4 @@
 import {
-  FETCH_TRACK_HISTORY_ERROR,
-  FETCH_TRACK_HISTORY_REQUEST,
-  FETCH_TRACK_HISTORY_SUCCESS,
   LOGIN_USER_FAILURE,
   LOGIN_USER_SUCCESS,
   LOGOUT_USER_FAILURE,
@@ -9,8 +6,6 @@ import {
   REGISTER_USER_FAILURE,
   REGISTER_USER_REQUEST,
   REGISTER_USER_SUCCESS,
-  SEND_LISTENED_TRACK_ERROR,
-  SEND_LISTENED_TRACK_SUCCESS,
   SET_NULL_LOGIN_ERROR,
   SET_NULL_REGISTER_ERROR
 } from "../actionTypes/usersActionTypes";
@@ -41,16 +36,6 @@ const usersReducer = (state = initialState, action) => {
           return {...state, loginError: null};
       case SET_NULL_REGISTER_ERROR:
           return {...state, registerError: null};
-      case SEND_LISTENED_TRACK_SUCCESS:
-          return {...state, loading: false};
-      case SEND_LISTENED_TRACK_ERROR: 
-          return {...state, loading: false, trackError: action.error};
-      case FETCH_TRACK_HISTORY_REQUEST: 
-          return {...state, loading: true}
-      case FETCH_TRACK_HISTORY_SUCCESS: 
-          return {...state,  loading: false, trackHistory: action.trackHistory}
-      case FETCH_TRACK_HISTORY_ERROR:
-          return {...state, loading: false, trackError: null}
       case LOGOUT_USER_SUCCESS:
           return {...state, loading: false, user: null};
       case LOGOUT_USER_FAILURE: 
