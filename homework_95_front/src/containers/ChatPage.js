@@ -1,26 +1,60 @@
 import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ChatField from "../components/ChatField/ChatField";
 import UsersList from "../components/UsersList/UsersList";
+import { fetchMessages, sendMessageSuccess } from "../store/actions/messagesActions";
 
 function ChatPage() {
+  const [waitingToReconnect, setWaitingToReconnect] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
   const {user} = useSelector(state => state.users);
-  const [messages, setMessages] = useState([{text: 'test', username: 'testName'}])
+  const {messages} = useSelector(state => state.messages);
+  const [fields, setFields] = useState({
+    text: ''
+  })
+  const dispatch = useDispatch();
   const [users, setUsers] = useState([])
+  
+  useEffect(()=>{
+    dispatch(fetchMessages())
+  }, [dispatch])
 
   const wsRef = useRef()
+
+
   useEffect(()=>{
+
+    if (waitingToReconnect) {
+      return;
+    }
+
     wsRef.current = new WebSocket(`ws://localhost:8000/chat?token=${user.token}`)
-
-    wsRef.current.onclose = () => console.log('connection lost')
-
+    wsRef.current.onopen = () => {
+      setIsOpen(true);
+      console.log('connected')
+    }
+    wsRef.current.onclose = () => {
+      console.log('connection lost, reconnect will be attempted in 3 second')
+      if (wsRef.current) {
+        console.log('ws closed by server');
+      } else {
+        console.log('ws closed by app component unmount');
+        return;
+      }
+      if (waitingToReconnect) {
+        return;
+      };
+      setIsOpen(false);
+      console.log('ws closed');
+      setWaitingToReconnect(true);
+      setTimeout(() => setWaitingToReconnect(null), 3000);
+    }
+    
     wsRef.current.addEventListener('message', (msg)=>{
       const decodedMessage = JSON.parse(msg.data)
       switch(decodedMessage.type) {
         case "NEW_MESSAGE":
-          setMessages(prevState=>{
-            return prevState.concat(decodedMessage.message)
-          });
+          dispatch(sendMessageSuccess(decodedMessage.message))
           break;
         case 'NEW_ONLINE_USER':
           setUsers(prevState=>{
@@ -32,13 +66,39 @@ function ChatPage() {
           break;
       }
     })
-    return ()=>wsRef.current.close()
-  }, [])
 
+    return ()=> {
+      wsRef.current.close(); 
+      wsRef.current = null
+    }
+  }, [waitingToReconnect])
+
+  const inputChangeHandler = (e) => {
+    const {name, value} = e.target;
+    setFields((prevState) => {
+        return {
+            ...prevState,
+            [name]: value
+        }
+    });
+  };
+
+  const sendMessageHandler = (e) => {
+    e.preventDefault()
+    wsRef.current.send(JSON.stringify({
+      type: "MESSAGE_CREATED",
+      message: fields.text
+    }))
+  }
   return (
     <div style={{'width': '90%', 'margin': '0 auto', 'display': 'flex', 'gap': '60px'}}>
         <UsersList users={users}/>
-        <ChatField messages={messages}/>
+        <ChatField 
+          messages={messages}
+          fields={fields}
+          inputChangeHandler={inputChangeHandler}
+          sendMessageHandler={sendMessageHandler}
+          />
     </div>
   );
 }

@@ -8,7 +8,7 @@ const auth = async (req, res, next) => {
 
     if (!user) return res.sendStatus(401);
 
-    req.body = {...req.body, user: user.username};
+    req.body = {...req.body, username: user.username};
 
     next();
 };

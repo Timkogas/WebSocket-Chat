@@ -1,8 +1,7 @@
 import MessageForm from '../MessageForm/MessageForm';
 import './ChatField.css'
 
-function ChatField({messages}) {
-
+function ChatField({messages, inputChangeHandler, fields, sendMessageHandler}) {
   return ( 
   <div className='chat_field_wrapper'>
     <div>
@@ -11,13 +10,17 @@ function ChatField({messages}) {
         {messages.map((message, i)=>{
           return (
             <div className='chat_field_message' key={i}>
-              <b>{message.username}:</b><p>{message.text}</p>
+              <b>{message.user}:</b><p>{message.text}</p>
             </div>
           )
         })}
       </div>
     </div>
-    <MessageForm/>
+    <MessageForm 
+      inputChangeHandler={inputChangeHandler} 
+      fields={fields}
+      sendMessageHandler={sendMessageHandler}
+    />
   </div> );
 }
 

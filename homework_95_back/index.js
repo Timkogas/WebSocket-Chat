@@ -6,6 +6,7 @@ const messages = require("./routes/messages");
 const app = express();
 const enableWs = require("express-ws");
 const User = require("./models/User");
+const Message = require("./models/Message");
 enableWs(app)
 
 const port = 8000;
@@ -37,18 +38,20 @@ app.ws('/chat', async (ws, req)=> {
     })
   }
 
-  ws.on('message', (message) => {
+  ws.on('message', async (message) => {
     const decodedMessage = JSON.parse(message)
 
     switch(decodedMessage.type) {
       case "MESSAGE_CREATED": 
         if (user) {
+          const message = new Message({text: decodedMessage.message, user: user.username});
+          await message.save();
           Object.keys(activeConnections).forEach(connId=>{
             const conn = activeConnections[connId]
             conn.send(JSON.stringify({
               type: "NEW_MESSAGE",
               message: {
-                username: user.username,
+                user: user.username,
                 text: decodedMessage.message
               }
             }))

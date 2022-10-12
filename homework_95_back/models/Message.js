@@ -6,7 +6,7 @@ const MessageSchema = new Schema({
     type: String,
     required: true,
   },
-  text:  {
+  text: {
     type: String,
     required: [true, 'Text is required']
   },

@@ -5,6 +5,7 @@ import App from './App';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import usersReducer from './store/reducers/usersReducer';
+import messagesReducer from './store/reducers/messagesReducer';
 
 
 const localStorageMiddleware = ({getState}) => (next) => (action) => {
@@ -23,6 +24,7 @@ const loadFromLocalStorage = () => {
 const store = configureStore({
   reducer: {
     users: usersReducer,
+    messages: messagesReducer
   },
   preloadedState: loadFromLocalStorage(),
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(localStorageMiddleware)
