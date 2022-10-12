@@ -2,10 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const users = require("./routes/users");
-const {nanoid} = require("nanoid")
+const messages = require("./routes/messages");
 const app = express();
 const enableWs = require("express-ws");
-const auth = require("./middleware/auth");
 const User = require("./models/User");
 enableWs(app)
 
@@ -14,6 +13,7 @@ const port = 8000;
 app.use(cors());
 app.use(express.json());
 app.use("/users", users);
+app.use("/messages", messages);
 
 const activeConnections = {}
 
