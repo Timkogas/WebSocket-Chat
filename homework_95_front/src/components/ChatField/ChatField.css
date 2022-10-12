@@ -1,0 +1,22 @@
+.chat_field_wrapper {
+  width: 80%;
+  height: 70vh;
+}
+.chat_field_title {
+  text-align: center;
+}
+.chat_field {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  padding-right: 30px;
+  gap: 10px;
+  border: 1px solid black;
+  height: 70vh;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+.chat_field_message {
+  display: flex;
+  gap: 5px;
+}

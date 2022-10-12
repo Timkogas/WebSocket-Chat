@@ -1,0 +1,22 @@
+.users_list_wrapper {
+  width: 20%;
+  height: 70vh;
+}
+.users_list_title {
+  text-align: center;
+}
+.users_list {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  padding-left: 40px;
+  gap: 10px;
+  border: 1px solid black;
+  height: 80vh;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+.users_list_item {
+  font-size: 22px;
+  font-weight: 600;
+}

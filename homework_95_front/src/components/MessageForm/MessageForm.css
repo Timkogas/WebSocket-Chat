@@ -1,0 +1,7 @@
+.message_form_wrapper {
+  display: flex;
+  align-items: center;
+  margin-top: 5vh;
+  height: 5vh;
+  gap: 80px;
+}

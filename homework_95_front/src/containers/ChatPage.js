@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import ChatField from "../components/ChatField/ChatField";
+import UsersList from "../components/UsersList/UsersList";
 
 function ChatPage() {
   const [messages, setMessages] = useState([{text: 'test', username: 'testName'}])
@@ -26,15 +28,9 @@ function ChatPage() {
     return ()=>wsRef.current.close()
   },[])
   return (
-    <div className="App">
-      {messages.map((message)=>{
-        return (
-        <>
-           <b>{message.username}</b>
-           <p>{message.text}</p>
-        </>
-        )
-      })}
+    <div style={{'width': '90%', 'margin': '0 auto', 'display': 'flex', 'gap': '60px'}}>
+        <UsersList/>
+        <ChatField/>
     </div>
   );
 }
