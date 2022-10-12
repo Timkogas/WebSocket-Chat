@@ -18,28 +18,28 @@ app.use("/users", users);
 const activeConnections = {}
 
 app.ws('/chat', async (ws, req)=> {
-  const id = nanoid()
 
   let query
   let user
-
-  activeConnections[id] = ws
-
+  
   if (req.query.token) {
     query = req.query.token
     user = await User.findOne({token: query})
+
+    activeConnections[user.username] = ws
+
     Object.keys(activeConnections).forEach(connId=>{
       const conn = activeConnections[connId]
       conn.send(JSON.stringify({
-        type: "NEW_USER",
-        username: user.username,
+        type: "NEW_ONLINE_USER",
+        users: Object.keys(activeConnections)
       }))
     })
   }
 
   ws.on('message', (message) => {
     const decodedMessage = JSON.parse(message)
-    
+
     switch(decodedMessage.type) {
       case "MESSAGE_CREATED": 
         if (user) {
@@ -56,8 +56,6 @@ app.ws('/chat', async (ws, req)=> {
         } else {
           ws.send('Login')
         }
-        break;
-
       default:
         console.log('Unknown message type ' + decodedMessage.type)
         break;
@@ -65,7 +63,14 @@ app.ws('/chat', async (ws, req)=> {
   })
 
   ws.on('close', (msg)=>{
-    delete activeConnections[id]
+    delete activeConnections[user.username]
+    Object.keys(activeConnections).forEach(connId=>{
+      const conn = activeConnections[connId]
+      conn.send(JSON.stringify({
+        type: "NEW_ONLINE_USER",
+        users: Object.keys(activeConnections)
+      }))
+    })
   })
 })
 

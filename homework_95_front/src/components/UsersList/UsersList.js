@@ -1,14 +1,18 @@
 import './UsersList.css'
 
-function UsersList() {
+function UsersList({users}) {
   return ( 
   <>
     <div className='users_list_wrapper'>
       <h2 className='users_list_title'>Users Online</h2>
       <ul className='users_list'>
-        <li className='users_list_item'>User</li>
-        <li className='users_list_item'>User2</li>
-        <li className='users_list_item'>User3</li>
+        {users.map( (user,i) => {
+          return(
+          <li className='users_list_item' key={i}>
+            {user}
+          </li>
+        )
+        })}
       </ul>
     </div>
   </> );
