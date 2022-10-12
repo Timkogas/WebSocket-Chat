@@ -19,15 +19,27 @@ const activeConnections = {}
 
 app.ws('/chat', async (ws, req)=> {
   const id = nanoid()
+
   let query
   let user
+
+  activeConnections[id] = ws
+
   if (req.query.token) {
     query = req.query.token
     user = await User.findOne({token: query})
+    Object.keys(activeConnections).forEach(connId=>{
+      const conn = activeConnections[connId]
+      conn.send(JSON.stringify({
+        type: "NEW_USER",
+        username: user.username,
+      }))
+    })
   }
-  activeConnections[id] = ws
+
   ws.on('message', (message) => {
     const decodedMessage = JSON.parse(message)
+    
     switch(decodedMessage.type) {
       case "MESSAGE_CREATED": 
         if (user) {
@@ -45,6 +57,7 @@ app.ws('/chat', async (ws, req)=> {
           ws.send('Login')
         }
         break;
+
       default:
         console.log('Unknown message type ' + decodedMessage.type)
         break;
