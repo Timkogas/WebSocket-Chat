@@ -6,7 +6,6 @@ import { fetchMessages, sendMessageSuccess } from "../store/actions/messagesActi
 
 function ChatPage() {
   const [waitingToReconnect, setWaitingToReconnect] = useState(null);
-  const [isOpen, setIsOpen] = useState(false);
   const {user} = useSelector(state => state.users);
   const {messages} = useSelector(state => state.messages);
   const [fields, setFields] = useState({
@@ -21,16 +20,14 @@ function ChatPage() {
 
   const wsRef = useRef()
 
-
   useEffect(()=>{
 
     if (waitingToReconnect) {
       return;
     }
 
-    wsRef.current = new WebSocket(`ws://localhost:8000/chat?token=${user.token}`)
+    wsRef.current = new WebSocket(`ws://localhost:8000/messages/chat?token=${user.token}`)
     wsRef.current.onopen = () => {
-      setIsOpen(true);
       console.log('connected')
     }
     wsRef.current.onclose = () => {
@@ -44,7 +41,6 @@ function ChatPage() {
       if (waitingToReconnect) {
         return;
       };
-      setIsOpen(false);
       console.log('ws closed');
       setWaitingToReconnect(true);
       setTimeout(() => setWaitingToReconnect(null), 3000);
@@ -71,7 +67,7 @@ function ChatPage() {
       wsRef.current.close(); 
       wsRef.current = null
     }
-  }, [waitingToReconnect])
+  }, [waitingToReconnect, dispatch, user.token])
 
   const inputChangeHandler = (e) => {
     const {name, value} = e.target;
@@ -89,6 +85,8 @@ function ChatPage() {
       type: "MESSAGE_CREATED",
       message: fields.text
     }))
+    setFields({text: ''})
+
   }
   return (
     <div style={{'width': '90%', 'margin': '0 auto', 'display': 'flex', 'gap': '60px'}}>
